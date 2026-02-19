@@ -137,7 +137,7 @@ $colorDot = [
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-1"></i>
+                            <i class="bi bi-floppy"></i>
                             {{ $feature->exists ? 'Yadda Saxla' : 'Əlavə Et' }}
                         </button>
                         <a href="{{ route('admin.features.index') }}" class="btn btn-outline-secondary">Ləğv Et</a>

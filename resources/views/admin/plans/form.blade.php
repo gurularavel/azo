@@ -32,7 +32,7 @@
             <label class="form-label">{{ __('messages.usage_limit_label') }}</label>
             <input class="form-control" type="number" name="usage_limit" value="{{ old('usage_limit', $plan->usage_limit) }}" required>
         </div>
-        <button class="btn btn-brand" type="submit">{{ __('messages.save') }}</button>
+        <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
     </form>
 </div>
 @endsection

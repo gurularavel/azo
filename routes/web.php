@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\FeatureController as AdminFeatureController;
+use App\Http\Controllers\Admin\PartnerController as AdminPartnerController;
 use App\Http\Controllers\Admin\CityController as AdminCityController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\HeroSlideController as AdminHeroSlideController;
@@ -13,6 +14,8 @@ use App\Http\Controllers\Admin\ShopCategoryController as AdminShopCategoryContro
 use App\Http\Controllers\Admin\ShopController as AdminShopController;
 use App\Http\Controllers\Admin\SubscriptionPlanController as AdminSubscriptionPlanController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
+use App\Http\Controllers\Admin\RoleController as AdminRoleController;
+use App\Http\Controllers\Admin\TranslationController as AdminTranslationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
@@ -23,6 +26,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Models\Blog;
 use App\Models\Feature;
 use App\Models\HeroSlide;
+use App\Models\Partner;
 use App\Models\Service;
 use App\Models\Shop;
 use App\Models\SubscriptionPlan;
@@ -78,6 +82,11 @@ Route::get('/', function () {
         $features = Feature::active()->orderBy('sort_order')->orderBy('id')->get();
     }
 
+    $partners = collect();
+    if (Schema::hasTable('partners')) {
+        $partners = Partner::active()->orderBy('sort_order')->orderBy('id')->get();
+    }
+
     return view('home', [
         'slides' => $slides,
         'homeBlogs' => $blogs,
@@ -85,6 +94,7 @@ Route::get('/', function () {
         'featuredShops' => $featuredShops,
         'plans' => $plans,
         'features' => $features,
+        'partners' => $partners,
     ]);
 })->name('home');
 
@@ -145,6 +155,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::resource('features', AdminFeatureController::class)->except(['show']);
 
+    Route::resource('partners', AdminPartnerController::class)->except(['show']);
+    Route::post('partners/order', [AdminPartnerController::class, 'order'])->name('partners.order');
+
     Route::get('profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
+
+    Route::resource('roles', AdminRoleController::class)->except(['show']);
+
+    Route::get('translations', [AdminTranslationController::class, 'index'])->name('translations.index');
+    Route::put('translations', [AdminTranslationController::class, 'update'])->name('translations.update');
 });

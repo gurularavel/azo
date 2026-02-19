@@ -67,7 +67,7 @@
             <input class="form-check-input" type="checkbox" name="is_active" id="is-active" value="1" @checked(old('is_active', $slide->is_active))>
             <label class="form-check-label" for="is-active">{{ __('messages.active') }}</label>
         </div>
-        <button class="btn btn-brand" type="submit">{{ __('messages.save') }}</button>
+        <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
     </form>
 </div>
 @endsection

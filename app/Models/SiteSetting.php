@@ -17,6 +17,7 @@ class SiteSetting extends Model
         'hero_primary_url',
         'hero_secondary_text',
         'hero_secondary_url',
+        'hero_image',
         'hero_stat_users_value',
         'hero_stat_users_label',
         'hero_stat_partners_value',
@@ -29,5 +30,7 @@ class SiteSetting extends Model
         'instagram_url',
         'youtube_url',
         'footer_text',
+        'terms_content',
+        'privacy_content',
     ];
 }

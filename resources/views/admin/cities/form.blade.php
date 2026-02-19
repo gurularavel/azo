@@ -32,7 +32,7 @@
                 <label class="form-check-label">{{ __('messages.active') }}</label>
             </div>
         </div>
-        <button class="btn btn-brand" type="submit">{{ __('messages.save') }}</button>
+        <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
     </form>
 </div>
 @endsection

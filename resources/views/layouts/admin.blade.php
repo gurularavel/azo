@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin') — {{ $siteSettings?->site_name ?? 'QR Endirim' }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('template/images/logo.svg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -153,6 +154,59 @@
 
         .admin-content { padding: 1.5rem; flex: 1; }
 
+        /* ── Brand button (Add / Save primary actions) ── */
+        .btn-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: linear-gradient(135deg, #213b67 0%, #16304f 100%);
+            color: #fff !important;
+            border: none;
+            font-weight: 600;
+            font-size: .875rem;
+            letter-spacing: .015em;
+            padding: .48rem 1.2rem;
+            border-radius: .55rem;
+            box-shadow: 0 2px 10px rgba(33,59,103,.28), inset 0 1px 0 rgba(255,255,255,.12);
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+            cursor: pointer;
+            text-decoration: none !important;
+            white-space: nowrap;
+        }
+        .btn-brand:hover {
+            background: linear-gradient(135deg, #1a3055 0%, #0f2035 100%);
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(33,59,103,.38), inset 0 1px 0 rgba(255,255,255,.12);
+        }
+        .btn-brand:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(33,59,103,.22);
+        }
+        .btn-brand i { font-size: .95em; }
+
+        /* btn-primary override — consistent with btn-brand */
+        .btn-primary {
+            background: linear-gradient(135deg, #213b67 0%, #16304f 100%) !important;
+            border-color: transparent !important;
+            font-weight: 600;
+            letter-spacing: .015em;
+            border-radius: .55rem;
+            box-shadow: 0 2px 10px rgba(33,59,103,.28), inset 0 1px 0 rgba(255,255,255,.12) !important;
+            transition: transform .18s ease, box-shadow .18s ease !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1a3055 0%, #0f2035 100%) !important;
+            border-color: transparent !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(33,59,103,.38) !important;
+        }
+        .btn-primary:active, .btn-primary:focus {
+            background: linear-gradient(135deg, #16304f 0%, #0f2035 100%) !important;
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 8px rgba(33,59,103,.22) !important;
+        }
+
         /* Lang buttons */
         .lang-btn { font-size: .75rem; font-weight: 600; padding: .25rem .6rem; }
         .lang-btn.active-lang { background: #213b67; color: #fff; border-color: #213b67; }
@@ -221,85 +275,141 @@
             <span class="link-text">{{ __('messages.admin_dashboard') }}</span>
         </a>
 
-        <div class="sidebar-section-label">Kataloq</div>
+        @php $u = auth()->user(); @endphp
 
+        @if($u->hasSection('shops') || $u->hasSection('shop-categories') || $u->hasSection('cities'))
+        <div class="sidebar-section-label">Kataloq</div>
+        @endif
+
+        @if($u->hasSection('shops'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.shops') ? 'active' : '' }}"
            href="{{ route('admin.shops.index') }}" data-label="{{ __('messages.manage_shops') }}">
             <i class="bi bi-shop"></i>
             <span class="link-text">{{ __('messages.manage_shops') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('shop-categories'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.shop-categories') ? 'active' : '' }}"
            href="{{ route('admin.shop-categories.index') }}" data-label="{{ __('messages.manage_categories') }}">
             <i class="bi bi-tags"></i>
             <span class="link-text">{{ __('messages.manage_categories') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('cities'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.cities') ? 'active' : '' }}"
            href="{{ route('admin.cities.index') }}" data-label="{{ __('messages.manage_cities') }}">
             <i class="bi bi-geo-alt"></i>
             <span class="link-text">{{ __('messages.manage_cities') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('users') || $u->hasSection('roles') || $u->hasSection('plans') || $u->hasSection('transactions') || $u->hasSection('reports'))
         <div class="sidebar-section-label">İstifadəçilər & Maliyyə</div>
+        @endif
 
+        @if($u->hasSection('users'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.users') ? 'active' : '' }}"
            href="{{ route('admin.users.index') }}" data-label="{{ __('messages.manage_users') }}">
             <i class="bi bi-people"></i>
             <span class="link-text">{{ __('messages.manage_users') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('roles'))
+        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.roles') ? 'active' : '' }}"
+           href="{{ route('admin.roles.index') }}" data-label="{{ __('messages.manage_roles') }}">
+            <i class="bi bi-shield-lock"></i>
+            <span class="link-text">{{ __('messages.manage_roles') }}</span>
+        </a>
+        @endif
+
+        @if($u->hasSection('plans'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.plans') ? 'active' : '' }}"
            href="{{ route('admin.plans.index') }}" data-label="{{ __('messages.manage_plans') }}">
             <i class="bi bi-credit-card"></i>
             <span class="link-text">{{ __('messages.manage_plans') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('transactions'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.transactions') ? 'active' : '' }}"
            href="{{ route('admin.transactions.index') }}" data-label="{{ __('messages.transaction_logs') }}">
             <i class="bi bi-receipt"></i>
             <span class="link-text">{{ __('messages.transaction_logs') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('reports'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.reports') ? 'active' : '' }}"
            href="{{ route('admin.reports.revenue') }}" data-label="{{ __('messages.revenue_reports') }}">
             <i class="bi bi-bar-chart-line"></i>
             <span class="link-text">{{ __('messages.revenue_reports') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('blogs') || $u->hasSection('services') || $u->hasSection('hero-slides') || $u->hasSection('features') || $u->hasSection('partners'))
         <div class="sidebar-section-label">Kontent</div>
+        @endif
 
+        @if($u->hasSection('blogs'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.blogs') ? 'active' : '' }}"
            href="{{ route('admin.blogs.index') }}" data-label="{{ __('messages.manage_blogs') }}">
             <i class="bi bi-newspaper"></i>
             <span class="link-text">{{ __('messages.manage_blogs') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('services'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.services') ? 'active' : '' }}"
            href="{{ route('admin.services.index') }}" data-label="{{ __('messages.manage_services') }}">
             <i class="bi bi-grid"></i>
             <span class="link-text">{{ __('messages.manage_services') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('hero-slides'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.hero-slides') ? 'active' : '' }}"
            href="{{ route('admin.hero-slides.index') }}" data-label="{{ __('messages.manage_slides') }}">
             <i class="bi bi-images"></i>
             <span class="link-text">{{ __('messages.manage_slides') }}</span>
         </a>
+        @endif
 
+        @if($u->hasSection('features'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.features') ? 'active' : '' }}"
-           href="{{ route('admin.features.index') }}" data-label="Niyə Biz? Kartları">
+           href="{{ route('admin.features.index') }}" data-label="{{ __('messages.manage_features') }}">
             <i class="bi bi-grid-3x3-gap"></i>
-            <span class="link-text">Niyə Biz? Kartları</span>
+            <span class="link-text">{{ __('messages.manage_features') }}</span>
         </a>
+        @endif
+
+        @if($u->hasSection('partners'))
+        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.partners') ? 'active' : '' }}"
+           href="{{ route('admin.partners.index') }}" data-label="{{ __('messages.manage_partners') }}">
+            <i class="bi bi-building"></i>
+            <span class="link-text">{{ __('messages.manage_partners') }}</span>
+        </a>
+        @endif
 
         <div class="sidebar-section-label">Sistem</div>
 
+        @if($u->hasSection('site-settings'))
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.site-settings') ? 'active' : '' }}"
            href="{{ route('admin.site-settings.edit') }}" data-label="{{ __('messages.site_settings') }}">
             <i class="bi bi-sliders"></i>
             <span class="link-text">{{ __('messages.site_settings') }}</span>
         </a>
+        @endif
+
+        @if($u->hasSection('translations'))
+        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.translations') ? 'active' : '' }}"
+           href="{{ route('admin.translations.index') }}" data-label="{{ __('messages.manage_translations') }}">
+            <i class="bi bi-translate"></i>
+            <span class="link-text">{{ __('messages.manage_translations') }}</span>
+        </a>
+        @endif
 
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.profile') ? 'active' : '' }}"
            href="{{ route('admin.profile.edit') }}" data-label="{{ __('messages.profile') }}">
@@ -339,7 +449,15 @@
             <i class="bi bi-layout-sidebar"></i>
         </button>
 
-        <span class="text-muted small flex-grow-1">{{ auth()->user()->name ?? 'Admin' }}</span>
+        <span class="text-muted small flex-grow-1 d-flex align-items-center gap-2">
+            {{ auth()->user()->name ?? 'Admin' }}
+            @php $r = auth()->user()->role ?? 'user'; @endphp
+            @if($r === 'superadmin')
+                <span class="badge bg-danger-subtle text-danger" style="font-size:.65rem">Superadmin</span>
+            @elseif($r === 'admin')
+                <span class="badge bg-warning-subtle text-warning" style="font-size:.65rem">Admin</span>
+            @endif
+        </span>
 
         {{-- Language switcher --}}
         @php $curLang = app()->getLocale(); @endphp

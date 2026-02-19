@@ -21,6 +21,7 @@
                 <tr>
                     <th>{{ __('messages.name') }}</th>
                     <th>{{ __('messages.email') }}</th>
+                    <th>{{ __('messages.role') }}</th>
                     <th>{{ __('messages.plan') }}</th>
                     <th>{{ __('messages.usage_remaining') }}</th>
                     <th>{{ __('messages.blocked') }}</th>
@@ -31,19 +32,41 @@
             @foreach($users as $user)
                 <tr>
                     <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td class="text-muted small">{{ $user->email }}</td>
+                    <td>
+                        @php
+                            $roleColors = ['superadmin' => 'danger', 'admin' => 'warning', 'user' => 'secondary'];
+                            $color = $roleColors[$user->role] ?? 'secondary';
+                        @endphp
+                        <span class="badge bg-{{ $color }}-subtle text-{{ $color }} rounded-pill px-2">
+                            {{ __('messages.role_' . $user->role) }}
+                        </span>
+                    </td>
                     <td>{{ $user->activeSubscription?->plan?->name ?? '-' }}</td>
                     <td>{{ $user->activeSubscription?->usage_remaining ?? '-' }}</td>
-                    <td>{{ $user->is_blocked ? __('messages.yes') : __('messages.no') }}</td>
                     <td>
-                        <form method="post" action="{{ route('admin.users.update', $user) }}" class="d-flex gap-2">
+                        <span class="badge {{ $user->is_blocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }} rounded-pill px-2">
+                            {{ $user->is_blocked ? __('messages.yes') : __('messages.no') }}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ route('admin.users.update', $user) }}" class="d-flex gap-2 flex-wrap">
                             @csrf
                             @method('put')
-                            <input class="form-control form-control-sm" type="number" name="usage_remaining" placeholder="{{ __('messages.usage_remaining') }}" value="{{ $user->activeSubscription?->usage_remaining }}">
-                            <select class="form-select form-select-sm" name="is_blocked">
+                            <input class="form-control form-control-sm" style="width:90px" type="number" name="usage_remaining"
+                                   placeholder="{{ __('messages.usage_remaining') }}"
+                                   value="{{ $user->activeSubscription?->usage_remaining }}">
+                            <select class="form-select form-select-sm" style="width:110px" name="is_blocked">
                                 <option value="0" @selected(!$user->is_blocked)>{{ __('messages.active') }}</option>
                                 <option value="1" @selected($user->is_blocked)>{{ __('messages.blocked') }}</option>
                             </select>
+                            @if(auth()->user()->role === 'superadmin')
+                            <select class="form-select form-select-sm" style="width:130px" name="role">
+                                <option value="user"       @selected($user->role === 'user')>{{ __('messages.role_user') }}</option>
+                                <option value="admin"      @selected($user->role === 'admin')>{{ __('messages.role_admin') }}</option>
+                                <option value="superadmin" @selected($user->role === 'superadmin')>{{ __('messages.role_superadmin') }}</option>
+                            </select>
+                            @endif
                             <button class="btn btn-sm btn-outline-dark" type="submit">{{ __('messages.update') }}</button>
                         </form>
                     </td>

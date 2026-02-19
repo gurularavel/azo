@@ -56,7 +56,7 @@
             <input class="form-check-input" type="checkbox" name="is_published" value="1" id="is-published" {{ old('is_published', $service->is_published) ? 'checked' : '' }}>
             <label class="form-check-label" for="is-published">{{ __('messages.published') }}</label>
         </div>
-        <button class="btn btn-brand" type="submit">{{ __('messages.save') }}</button>
+        <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
     </form>
 </div>
 @endsection

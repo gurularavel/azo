@@ -50,7 +50,7 @@
             <a href="{{ route('shops.index') }}" class="{{ str_starts_with($path, 'shops') ? 'nav-link-active' : 'text-slate-600' }} hover:text-primary transition-colors text-lg">{{ __('messages.shops') }}</a>
             <a href="{{ route('blogs.index') }}" class="{{ str_starts_with($path, 'blogs') ? 'nav-link-active' : 'text-slate-600' }} hover:text-primary transition-colors text-lg">{{ __('messages.blogs') }}</a>
             <a href="{{ route('services.index') }}" class="{{ str_starts_with($path, 'services') ? 'nav-link-active' : 'text-slate-600' }} hover:text-primary transition-colors text-lg">{{ __('messages.services') }}</a>
-            <a href="{{ route('contact') }}" class="{{ $path === 'contact' ? 'nav-link-active' : 'text-slate-600' }} hover:text-primary transition-colors text-lg">Əlaqə</a>
+            <a href="{{ route('contact') }}" class="{{ $path === 'contact' ? 'nav-link-active' : 'text-slate-600' }} hover:text-primary transition-colors text-lg">{{ __('messages.contact') }}</a>
             @auth
                 <a href="{{ route('subscriptions.index') }}" class="{{ str_starts_with($path, 'subscriptions') ? 'nav-link-active' : 'text-slate-600' }} hover:text-primary transition-colors text-lg">{{ __('messages.subscriptions') }}</a>
             @endauth
@@ -102,7 +102,7 @@
             <a href="{{ route('shops.index') }}" class="text-slate-700">{{ __('messages.shops') }}</a>
             <a href="{{ route('blogs.index') }}" class="text-slate-700">{{ __('messages.blogs') }}</a>
             <a href="{{ route('services.index') }}" class="text-slate-700">{{ __('messages.services') }}</a>
-            <a href="{{ route('contact') }}" class="text-slate-700">Əlaqə</a>
+            <a href="{{ route('contact') }}" class="text-slate-700">{{ __('messages.contact') }}</a>
             @auth
                 <a href="{{ route('subscriptions.index') }}" class="text-slate-700">{{ __('messages.subscriptions') }}</a>
                 @if(auth()->user()->is_admin)

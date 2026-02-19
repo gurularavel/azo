@@ -22,16 +22,29 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $data = $request->validate([
-            'is_blocked' => ['required', 'boolean'],
+        $isSuperAdmin = auth()->user()->role === 'superadmin';
+
+        $rules = [
+            'is_blocked'      => ['required', 'boolean'],
             'usage_remaining' => ['nullable', 'integer', 'min:0'],
-        ]);
+        ];
 
-        $user->update([
-            'is_blocked' => $data['is_blocked'],
-        ]);
+        if ($isSuperAdmin) {
+            $rules['role'] = ['required', 'in:user,admin,superadmin'];
+        }
 
-        if ($data['usage_remaining'] !== null) {
+        $data = $request->validate($rules);
+
+        $userFields = ['is_blocked' => $data['is_blocked']];
+
+        if ($isSuperAdmin && isset($data['role'])) {
+            $userFields['role']     = $data['role'];
+            $userFields['is_admin'] = in_array($data['role'], ['admin', 'superadmin']);
+        }
+
+        $user->update($userFields);
+
+        if (($data['usage_remaining'] ?? null) !== null) {
             $subscription = $user->activeSubscription()->first();
             if ($subscription) {
                 $subscription->update(['usage_remaining' => $data['usage_remaining']]);

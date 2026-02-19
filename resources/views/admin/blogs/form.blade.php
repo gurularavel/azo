@@ -60,7 +60,7 @@
             <input class="form-check-input" type="checkbox" name="show_on_home" value="1" id="show-on-home" {{ old('show_on_home', $blog->show_on_home) ? 'checked' : '' }}>
             <label class="form-check-label" for="show-on-home">{{ __('messages.show_on_home') }}</label>
         </div>
-        <button class="btn btn-brand" type="submit">{{ __('messages.save') }}</button>
+        <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
     </form>
 </div>
 @endsection

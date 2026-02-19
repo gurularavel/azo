@@ -27,6 +27,10 @@
         $heroImage = str_starts_with($slide->image_path, 'http')
             ? $slide->image_path
             : asset('storage/' . $slide->image_path);
+    } elseif ($siteSettings?->hero_image) {
+        $heroImage = str_starts_with($siteSettings->hero_image, 'http')
+            ? $siteSettings->hero_image
+            : asset('storage/' . $siteSettings->hero_image);
     }
     $statUsersVal     = $siteSettings?->hero_stat_users_value     ?? '50k+';
     $statUsersLabel   = $siteSettings?->hero_stat_users_label     ?? 'İstifadəçi';
@@ -103,6 +107,7 @@
 </section>
 
 {{-- Partner Logos --}}
+@if($partners->isNotEmpty())
 <section class="py-20 overflow-hidden">
     <div class="container mx-auto px-4">
         <div class="flex flex-col items-center mb-12">
@@ -110,15 +115,31 @@
             <h2 class="text-3xl font-bold text-secondary text-center">Etibar Edən Partnyorlarımız</h2>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
-            @foreach(['bravo', 'neptun', 'irsad', 'zara'] as $partner)
+            @foreach($partners as $partner)
+            @php
+                $logoUrl = $partner->logo_path
+                    ? (str_starts_with($partner->logo_path, 'http') ? $partner->logo_path : asset('storage/' . $partner->logo_path))
+                    : null;
+            @endphp
             <div class="group bg-white p-6 rounded-lg border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex items-center justify-center h-48">
-                <img src="{{ asset('template/images/stores/' . $partner . '.jpg') }}" alt="{{ $partner }}"
-                    class="h-32 w-auto object-contain grayscale group-hover:grayscale-0 transition-all duration-500" />
+                @if($partner->website_url)
+                    <a href="{{ $partner->website_url }}" target="_blank" rel="noopener" class="flex items-center justify-center w-full h-full">
+                @endif
+                @if($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $partner->name }}"
+                        class="h-32 w-auto object-contain grayscale group-hover:grayscale-0 transition-all duration-500" />
+                @else
+                    <span class="text-slate-400 font-semibold text-lg">{{ $partner->name }}</span>
+                @endif
+                @if($partner->website_url)
+                    </a>
+                @endif
             </div>
             @endforeach
         </div>
     </div>
 </section>
+@endif
 
 {{-- Why Us --}}
 @if($features->isNotEmpty())

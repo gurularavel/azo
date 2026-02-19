@@ -14,7 +14,7 @@
 </div>
 <div class="d-flex align-items-center justify-content-between mb-3">
     <h3 class="mb-0">{{ __('messages.manage_plans') }}</h3>
-    <a class="btn btn-brand" href="{{ route('admin.plans.create') }}">{{ __('messages.add_plan') }}</a>
+    <a class="btn btn-brand" href="{{ route('admin.plans.create') }}"><i class="bi bi-plus-lg"></i> {{ __('messages.add_plan') }}</a>
 </div>
 
 <div class="card shadow-sm">

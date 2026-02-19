@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'is_admin',
         'is_blocked',
         'otp_verified_at',
+        'role',
     ];
 
     /**
@@ -53,6 +55,23 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'is_blocked' => 'boolean',
         ];
+    }
+
+    public function roleModel(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role', 'name');
+    }
+
+    public function hasSection(string $section): bool
+    {
+        if (!$this->role || $this->role === 'user') return false;
+        if ($this->role === 'superadmin') return true;
+
+        $role = $this->relationLoaded('roleModel')
+            ? $this->roleModel
+            : $this->roleModel()->first();
+
+        return $role && in_array($section, $role->permissions ?? []);
     }
 
     public function subscriptions()

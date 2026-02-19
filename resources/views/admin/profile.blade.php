@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="mt-4">
-            <button class="btn btn-brand" type="submit">{{ __('messages.save') }}</button>
+            <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
         </div>
     </form>
 </div>

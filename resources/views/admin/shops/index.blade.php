@@ -14,7 +14,7 @@
 </div>
 <div class="d-flex align-items-center justify-content-between mb-3">
     <h3 class="mb-0">{{ __('messages.manage_shops') }}</h3>
-    <a class="btn btn-brand" href="{{ route('admin.shops.create') }}">{{ __('messages.add_shop') }}</a>
+    <a class="btn btn-brand" href="{{ route('admin.shops.create') }}"><i class="bi bi-plus-lg"></i> {{ __('messages.add_shop') }}</a>
 </div>
 <form method="get" class="card shadow-sm p-3 mb-3">
     <div class="row g-2 align-items-end">
