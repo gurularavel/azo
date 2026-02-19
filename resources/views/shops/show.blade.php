@@ -16,7 +16,7 @@
             <div class="relative z-10 max-w-2xl">
                 @if($shop->logo_path)
                     <div class="mb-5 md:mb-10 p-4 md:p-6 bg-white/10 backdrop-blur-md rounded-sm inline-block border border-white/20">
-                        <img src="{{ asset('storage/' . $shop->logo_path) }}" class="h-12 md:h-20 w-auto" style="filter: brightness(0) invert(1);" />
+                        <img src="{{ asset('storage/' . $shop->logo_path) }}" class="h-12 md:h-20 w-auto"  />
                     </div>
                 @endif
                 <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white mb-3 md:mb-6">
