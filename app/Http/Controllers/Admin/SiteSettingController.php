@@ -29,6 +29,7 @@ class SiteSettingController extends Controller
     {
         $data = $request->validate([
             'site_name'                => ['required', 'string', 'max:255'],
+            'default_locale'           => ['nullable', 'string', 'in:az,en,ru'],
             'hero_title'               => ['nullable', 'string', 'max:255'],
             'hero_subtitle'            => ['nullable', 'string', 'max:2000'],
             'hero_primary_text'        => ['nullable', 'string', 'max:255'],
@@ -51,6 +52,8 @@ class SiteSettingController extends Controller
             'footer_text'              => ['nullable', 'string', 'max:2000'],
             'terms_content'            => ['nullable', 'string'],
             'privacy_content'          => ['nullable', 'string'],
+            'services_hero_title'      => ['nullable', 'string', 'max:255'],
+            'services_hero_subtitle'   => ['nullable', 'string', 'max:2000'],
         ]);
 
         $settings = SiteSetting::query()->first();

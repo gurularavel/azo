@@ -5,7 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class SetLocale
 {
@@ -18,16 +20,32 @@ class SetLocale
             $request->session()->put('locale', $locale);
         }
 
+        $siteDefault = $this->siteDefaultLocale();
+
         $selected = $request->session()->get('locale')
             ?? $request->user()?->locale
+            ?? $siteDefault
             ?? config('app.locale');
 
         if (!in_array($selected, $allowed, true)) {
-            $selected = config('app.locale');
+            $selected = $siteDefault ?? config('app.locale');
         }
 
         App::setLocale($selected);
 
         return $next($request);
+    }
+
+    private function siteDefaultLocale(): ?string
+    {
+        try {
+            if (Schema::hasTable('site_settings')) {
+                return \App\Models\SiteSetting::query()->value('default_locale');
+            }
+        } catch (Throwable) {
+            // DB not ready
+        }
+
+        return null;
     }
 }

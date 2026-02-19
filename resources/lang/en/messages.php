@@ -270,4 +270,6 @@ return [
     'nav_group_system' => 'System',
     'services_hero_title' => 'Services page title',
     'services_hero_subtitle' => 'Services page subtitle',
+    'default_language' => 'Default language',
+    'default_language_hint' => 'This language will be used when the visitor has not selected a language.',
 ];

@@ -270,4 +270,6 @@ return [
     'nav_group_system' => 'Sistem',
     'services_hero_title' => 'Xidmətlər başlığı',
     'services_hero_subtitle' => 'Xidmətlər alt başlığı',
+    'default_language' => 'Standart dil',
+    'default_language_hint' => 'Ziyarətçi dil seçmədikdə bu dil istifadə ediləcək.',
 ];

@@ -19,6 +19,16 @@
             </div>
 
             <div class="col-md-6">
+                <label class="form-label">{{ __('messages.default_language') }}</label>
+                <select name="default_locale" class="form-select">
+                    <option value="az" {{ old('default_locale', $settings->default_locale ?? 'az') === 'az' ? 'selected' : '' }}>🇦🇿 Azərbaycan dili (AZ)</option>
+                    <option value="en" {{ old('default_locale', $settings->default_locale ?? 'az') === 'en' ? 'selected' : '' }}>🇬🇧 English (EN)</option>
+                    <option value="ru" {{ old('default_locale', $settings->default_locale ?? 'az') === 'ru' ? 'selected' : '' }}>🇷🇺 Русский (RU)</option>
+                </select>
+                <div class="form-text">{{ __('messages.default_language_hint') }}</div>
+            </div>
+
+            <div class="col-md-6">
                 <label class="form-label">Contact Email</label>
                 <input type="email" name="contact_email" class="form-control" value="{{ old('contact_email', $settings->contact_email) }}">
             </div>

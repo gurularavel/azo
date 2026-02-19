@@ -11,6 +11,7 @@ class SiteSetting extends Model
 
     protected $fillable = [
         'site_name',
+        'default_locale',
         'hero_title',
         'hero_subtitle',
         'hero_primary_text',

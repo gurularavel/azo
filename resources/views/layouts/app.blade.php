@@ -118,7 +118,7 @@
     </div>
 </header>
 
-<main class="pt-28 min-h-screen">
+<main class="min-h-screen">
     @if(session('status'))
         <div class="container mx-auto px-4 mt-4">
             <div class="mb-4 p-4 rounded-sm bg-green-50 text-green-800 border border-green-200">{{ session('status') }}</div>

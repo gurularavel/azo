@@ -270,4 +270,6 @@ return [
     'nav_group_system' => 'Система',
     'services_hero_title' => 'Заголовок страницы услуг',
     'services_hero_subtitle' => 'Подзаголовок страницы услуг',
+    'default_language' => 'Язык по умолчанию',
+    'default_language_hint' => 'Этот язык будет использоваться, если посетитель не выбрал язык.',
 ];
