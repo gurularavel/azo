@@ -122,6 +122,17 @@
             <label class="form-label">{{ __('messages.description') }}</label>
             <textarea class="form-control js-summernote" name="description" rows="4">{{ old('description', $shop->description) }}</textarea>
         </div>
+        <div class="mb-3">
+            <label class="form-label">{{ __('messages.map_embed') }}</label>
+            <textarea class="form-control font-monospace" name="map_embed" rows="4"
+                      placeholder='<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'>{{ old('map_embed', $shop->map_embed) }}</textarea>
+            <div class="form-text">{{ __('messages.map_embed_hint') }}</div>
+            @if(old('map_embed', $shop->map_embed))
+            <div class="mt-2 ratio ratio-16x9 rounded-3 overflow-hidden border" style="max-height:220px;">
+                {!! old('map_embed', $shop->map_embed) !!}
+            </div>
+            @endif
+        </div>
         <button class="btn btn-brand" type="submit"><i class="bi bi-floppy"></i> {{ __('messages.save') }}</button>
     </form>
 </div>

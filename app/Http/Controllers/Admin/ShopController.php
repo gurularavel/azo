@@ -100,6 +100,7 @@ class ShopController extends Controller
             'image_order_list' => ['nullable', 'string'],
             'discount_percent' => ['required', 'integer', 'min:0', 'max:100'],
             'description' => ['nullable', 'string'],
+            'map_embed'   => ['nullable', 'string', 'max:5000'],
         ]);
     }
 

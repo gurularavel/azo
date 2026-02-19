@@ -272,4 +272,7 @@ return [
     'services_hero_subtitle' => 'Services page subtitle',
     'default_language' => 'Default language',
     'default_language_hint' => 'This language will be used when the visitor has not selected a language.',
+    'map_embed' => 'Map embed code',
+    'map_embed_hint' => 'Paste the iframe code from Google Maps → Share → Embed a map.',
+    'location' => 'Location & Map',
 ];

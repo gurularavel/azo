@@ -17,6 +17,7 @@ class Shop extends Model
         'header_image_path',
         'discount_percent',
         'description',
+        'map_embed',
     ];
 
     public function qrSessions()

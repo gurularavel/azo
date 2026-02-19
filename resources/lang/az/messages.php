@@ -272,4 +272,7 @@ return [
     'services_hero_subtitle' => 'Xidmətlər alt başlığı',
     'default_language' => 'Standart dil',
     'default_language_hint' => 'Ziyarətçi dil seçmədikdə bu dil istifadə ediləcək.',
+    'map_embed' => 'Xəritə embed kodu',
+    'map_embed_hint' => 'Google Maps → "Paylaş" → "Xəritəni yerləşdir" bölməsindən iframe kodunu yapışdırın.',
+    'location' => 'Ünvan & Xəritə',
 ];

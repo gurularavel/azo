@@ -272,4 +272,7 @@ return [
     'services_hero_subtitle' => 'Подзаголовок страницы услуг',
     'default_language' => 'Язык по умолчанию',
     'default_language_hint' => 'Этот язык будет использоваться, если посетитель не выбрал язык.',
+    'map_embed' => 'Код вставки карты',
+    'map_embed_hint' => 'Вставьте код iframe из Google Maps → Поделиться → Встроить карту.',
+    'location' => 'Адрес & Карта',
 ];

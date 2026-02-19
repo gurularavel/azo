@@ -78,6 +78,24 @@
                 </div>
                 @endif
 
+                {{-- Map --}}
+                @if($shop->map_embed)
+                <div class="bg-white p-6 md:p-12 rounded-xl md:rounded-sm shadow-xl border border-slate-50">
+                    <h2 class="text-xl md:text-3xl font-black text-secondary mb-6 md:mb-8">
+                        <span class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 text-primary">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+                            {{ __('messages.location') }}
+                        </span>
+                    </h2>
+                    <div class="map-container rounded-2xl overflow-hidden border border-slate-100 shadow-md" style="height:380px;">
+                        {!! $shop->map_embed !!}
+                    </div>
+                </div>
+                @endif
+
             </div>
 
             {{-- Sidebar --}}
@@ -170,3 +188,15 @@
 
 </div>
 @endsection
+
+@push('styles')
+<style>
+    /* Make Google Maps iframe fill its container */
+    .map-container iframe {
+        width: 100% !important;
+        height: 100% !important;
+        border: 0;
+        display: block;
+    }
+</style>
+@endpush
