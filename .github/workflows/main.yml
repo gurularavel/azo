@@ -12,5 +12,5 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@v4.3.6
       with:
         server: 192.250.229.81
-        username: demo@azo.az
+        username: demo@demo.azo.az
         password: ${{ secrets.ftp_password }}
