@@ -211,6 +211,61 @@
         .lang-btn { font-size: .75rem; font-weight: 600; padding: .25rem .6rem; }
         .lang-btn.active-lang { background: #213b67; color: #fff; border-color: #213b67; }
 
+        /* ── Nav Groups (accordion) ── */
+        .nav-group { margin-bottom: 2px; }
+
+        .nav-group-toggle {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            border-radius: .5rem;
+            padding: .55rem .75rem;
+            white-space: nowrap;
+            font-size: .875rem;
+            cursor: pointer;
+            transition: background .15s, color .15s;
+            text-align: left;
+        }
+        .nav-group-toggle:hover {
+            background: var(--sidebar-active-bg);
+            color: var(--sidebar-active-text);
+        }
+        .nav-group-icon {
+            flex-shrink: 0;
+            width: 22px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .nav-group-label { flex: 1; overflow: hidden; }
+        .nav-group-chevron {
+            font-size: .7rem !important;
+            width: auto !important;
+            flex-shrink: 0;
+            transition: transform .2s ease;
+        }
+        .nav-group-toggle:not(.collapsed) .nav-group-chevron { transform: rotate(180deg); }
+
+        .nav-group-items { padding-left: .5rem; }
+
+        .nav-link.nav-sub {
+            padding-left: 1.1rem;
+            font-size: .845rem;
+        }
+        .nav-link.nav-sub i { font-size: 1rem; }
+
+        /* Hide group toggles text in collapsed sidebar */
+        #admin-sidebar.collapsed .nav-group-toggle .link-text { opacity: 0; width: 0; }
+        #admin-sidebar.collapsed .nav-group-items { display: none !important; }
+        #admin-sidebar.collapsed .nav-group-toggle {
+            justify-content: center;
+            padding: .55rem 0;
+        }
+        #admin-sidebar.collapsed .nav-group-icon { width: 100%; font-size: 1.1rem; }
+
         /* Tooltip on collapsed */
         #admin-sidebar.collapsed .nav-link { position: relative; }
         #admin-sidebar.collapsed .nav-link:hover::after {
@@ -265,152 +320,231 @@
 
     {{-- Nav --}}
     <nav class="sidebar-nav">
-        @php $cur = request()->route()?->getName(); @endphp
+        @php
+            $cur = request()->route()?->getName();
+            $u   = auth()->user();
 
-        <div class="sidebar-section-label">Ümumi</div>
+            // Determine which accordion group is active
+            $activeCatalog  = str_starts_with($cur ?? '', 'admin.shops') || str_starts_with($cur ?? '', 'admin.shop-categories') || str_starts_with($cur ?? '', 'admin.cities');
+            $activeFinance  = str_starts_with($cur ?? '', 'admin.users') || str_starts_with($cur ?? '', 'admin.roles') || str_starts_with($cur ?? '', 'admin.plans') || str_starts_with($cur ?? '', 'admin.transactions') || str_starts_with($cur ?? '', 'admin.reports');
+            $activeContent  = str_starts_with($cur ?? '', 'admin.blogs') || str_starts_with($cur ?? '', 'admin.services') || str_starts_with($cur ?? '', 'admin.hero-slides') || str_starts_with($cur ?? '', 'admin.features') || str_starts_with($cur ?? '', 'admin.partners');
+            $activeMessages = str_starts_with($cur ?? '', 'admin.subscribers') || str_starts_with($cur ?? '', 'admin.contact-messages');
+            $activeSystem   = str_starts_with($cur ?? '', 'admin.site-settings') || str_starts_with($cur ?? '', 'admin.translations');
+        @endphp
 
+        {{-- Dashboard --}}
         <a class="nav-link {{ $cur === 'admin.dashboard' ? 'active' : '' }}"
            href="{{ route('admin.dashboard') }}" data-label="{{ __('messages.admin_dashboard') }}">
             <i class="bi bi-speedometer2"></i>
             <span class="link-text">{{ __('messages.admin_dashboard') }}</span>
         </a>
 
-        @php $u = auth()->user(); @endphp
-
+        {{-- GROUP: Kataloq --}}
         @if($u->hasSection('shops') || $u->hasSection('shop-categories') || $u->hasSection('cities'))
-        <div class="sidebar-section-label">Kataloq</div>
+        <div class="nav-group">
+            <button class="nav-group-toggle {{ $activeCatalog ? '' : 'collapsed' }}"
+                    data-bs-toggle="collapse" data-bs-target="#grp-catalog"
+                    aria-expanded="{{ $activeCatalog ? 'true' : 'false' }}">
+                <span class="nav-group-icon"><i class="bi bi-shop"></i></span>
+                <span class="link-text nav-group-label">{{ __('messages.nav_group_catalog') }}</span>
+                <i class="bi bi-chevron-down nav-group-chevron link-text"></i>
+            </button>
+            <div id="grp-catalog" class="collapse nav-group-items {{ $activeCatalog ? 'show' : '' }}">
+                @if($u->hasSection('shops'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.shops') ? 'active' : '' }}"
+                   href="{{ route('admin.shops.index') }}" data-label="{{ __('messages.nav_shops') }}">
+                    <i class="bi bi-shop"></i>
+                    <span class="link-text">{{ __('messages.nav_shops') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('shop-categories'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.shop-categories') ? 'active' : '' }}"
+                   href="{{ route('admin.shop-categories.index') }}" data-label="{{ __('messages.nav_categories') }}">
+                    <i class="bi bi-tags"></i>
+                    <span class="link-text">{{ __('messages.nav_categories') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('cities'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.cities') ? 'active' : '' }}"
+                   href="{{ route('admin.cities.index') }}" data-label="{{ __('messages.nav_cities') }}">
+                    <i class="bi bi-geo-alt"></i>
+                    <span class="link-text">{{ __('messages.nav_cities') }}</span>
+                </a>
+                @endif
+            </div>
+        </div>
         @endif
 
-        @if($u->hasSection('shops'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.shops') ? 'active' : '' }}"
-           href="{{ route('admin.shops.index') }}" data-label="{{ __('messages.manage_shops') }}">
-            <i class="bi bi-shop"></i>
-            <span class="link-text">{{ __('messages.manage_shops') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('shop-categories'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.shop-categories') ? 'active' : '' }}"
-           href="{{ route('admin.shop-categories.index') }}" data-label="{{ __('messages.manage_categories') }}">
-            <i class="bi bi-tags"></i>
-            <span class="link-text">{{ __('messages.manage_categories') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('cities'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.cities') ? 'active' : '' }}"
-           href="{{ route('admin.cities.index') }}" data-label="{{ __('messages.manage_cities') }}">
-            <i class="bi bi-geo-alt"></i>
-            <span class="link-text">{{ __('messages.manage_cities') }}</span>
-        </a>
-        @endif
-
+        {{-- GROUP: İstifadəçilər & Maliyyə --}}
         @if($u->hasSection('users') || $u->hasSection('roles') || $u->hasSection('plans') || $u->hasSection('transactions') || $u->hasSection('reports'))
-        <div class="sidebar-section-label">İstifadəçilər & Maliyyə</div>
+        <div class="nav-group">
+            <button class="nav-group-toggle {{ $activeFinance ? '' : 'collapsed' }}"
+                    data-bs-toggle="collapse" data-bs-target="#grp-finance"
+                    aria-expanded="{{ $activeFinance ? 'true' : 'false' }}">
+                <span class="nav-group-icon"><i class="bi bi-people"></i></span>
+                <span class="link-text nav-group-label">{{ __('messages.nav_group_users_finance') }}</span>
+                <i class="bi bi-chevron-down nav-group-chevron link-text"></i>
+            </button>
+            <div id="grp-finance" class="collapse nav-group-items {{ $activeFinance ? 'show' : '' }}">
+                @if($u->hasSection('users'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.users') ? 'active' : '' }}"
+                   href="{{ route('admin.users.index') }}" data-label="{{ __('messages.nav_users') }}">
+                    <i class="bi bi-people"></i>
+                    <span class="link-text">{{ __('messages.nav_users') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('roles'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.roles') ? 'active' : '' }}"
+                   href="{{ route('admin.roles.index') }}" data-label="{{ __('messages.nav_roles') }}">
+                    <i class="bi bi-shield-lock"></i>
+                    <span class="link-text">{{ __('messages.nav_roles') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('plans'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.plans') ? 'active' : '' }}"
+                   href="{{ route('admin.plans.index') }}" data-label="{{ __('messages.nav_plans') }}">
+                    <i class="bi bi-credit-card"></i>
+                    <span class="link-text">{{ __('messages.nav_plans') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('transactions'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.transactions') ? 'active' : '' }}"
+                   href="{{ route('admin.transactions.index') }}" data-label="{{ __('messages.nav_transactions') }}">
+                    <i class="bi bi-receipt"></i>
+                    <span class="link-text">{{ __('messages.nav_transactions') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('reports'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.reports') ? 'active' : '' }}"
+                   href="{{ route('admin.reports.revenue') }}" data-label="{{ __('messages.nav_reports') }}">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span class="link-text">{{ __('messages.nav_reports') }}</span>
+                </a>
+                @endif
+            </div>
+        </div>
         @endif
 
-        @if($u->hasSection('users'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.users') ? 'active' : '' }}"
-           href="{{ route('admin.users.index') }}" data-label="{{ __('messages.manage_users') }}">
-            <i class="bi bi-people"></i>
-            <span class="link-text">{{ __('messages.manage_users') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('roles'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.roles') ? 'active' : '' }}"
-           href="{{ route('admin.roles.index') }}" data-label="{{ __('messages.manage_roles') }}">
-            <i class="bi bi-shield-lock"></i>
-            <span class="link-text">{{ __('messages.manage_roles') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('plans'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.plans') ? 'active' : '' }}"
-           href="{{ route('admin.plans.index') }}" data-label="{{ __('messages.manage_plans') }}">
-            <i class="bi bi-credit-card"></i>
-            <span class="link-text">{{ __('messages.manage_plans') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('transactions'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.transactions') ? 'active' : '' }}"
-           href="{{ route('admin.transactions.index') }}" data-label="{{ __('messages.transaction_logs') }}">
-            <i class="bi bi-receipt"></i>
-            <span class="link-text">{{ __('messages.transaction_logs') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('reports'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.reports') ? 'active' : '' }}"
-           href="{{ route('admin.reports.revenue') }}" data-label="{{ __('messages.revenue_reports') }}">
-            <i class="bi bi-bar-chart-line"></i>
-            <span class="link-text">{{ __('messages.revenue_reports') }}</span>
-        </a>
-        @endif
-
+        {{-- GROUP: Kontent --}}
         @if($u->hasSection('blogs') || $u->hasSection('services') || $u->hasSection('hero-slides') || $u->hasSection('features') || $u->hasSection('partners'))
-        <div class="sidebar-section-label">Kontent</div>
+        <div class="nav-group">
+            <button class="nav-group-toggle {{ $activeContent ? '' : 'collapsed' }}"
+                    data-bs-toggle="collapse" data-bs-target="#grp-content"
+                    aria-expanded="{{ $activeContent ? 'true' : 'false' }}">
+                <span class="nav-group-icon"><i class="bi bi-layout-text-window"></i></span>
+                <span class="link-text nav-group-label">{{ __('messages.nav_group_content') }}</span>
+                <i class="bi bi-chevron-down nav-group-chevron link-text"></i>
+            </button>
+            <div id="grp-content" class="collapse nav-group-items {{ $activeContent ? 'show' : '' }}">
+                @if($u->hasSection('blogs'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.blogs') ? 'active' : '' }}"
+                   href="{{ route('admin.blogs.index') }}" data-label="{{ __('messages.nav_blogs') }}">
+                    <i class="bi bi-newspaper"></i>
+                    <span class="link-text">{{ __('messages.nav_blogs') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('services'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.services') ? 'active' : '' }}"
+                   href="{{ route('admin.services.index') }}" data-label="{{ __('messages.nav_services') }}">
+                    <i class="bi bi-grid"></i>
+                    <span class="link-text">{{ __('messages.nav_services') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('hero-slides'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.hero-slides') ? 'active' : '' }}"
+                   href="{{ route('admin.hero-slides.index') }}" data-label="{{ __('messages.nav_slides') }}">
+                    <i class="bi bi-images"></i>
+                    <span class="link-text">{{ __('messages.nav_slides') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('features'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.features') ? 'active' : '' }}"
+                   href="{{ route('admin.features.index') }}" data-label="{{ __('messages.nav_features') }}">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    <span class="link-text">{{ __('messages.nav_features') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('partners'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.partners') ? 'active' : '' }}"
+                   href="{{ route('admin.partners.index') }}" data-label="{{ __('messages.nav_partners') }}">
+                    <i class="bi bi-building"></i>
+                    <span class="link-text">{{ __('messages.nav_partners') }}</span>
+                </a>
+                @endif
+            </div>
+        </div>
         @endif
 
-        @if($u->hasSection('blogs'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.blogs') ? 'active' : '' }}"
-           href="{{ route('admin.blogs.index') }}" data-label="{{ __('messages.manage_blogs') }}">
-            <i class="bi bi-newspaper"></i>
-            <span class="link-text">{{ __('messages.manage_blogs') }}</span>
-        </a>
+        {{-- GROUP: Mesajlar --}}
+        @if($u->hasSection('subscribers') || $u->hasSection('contact-messages'))
+        @php $unreadCount = \App\Models\ContactMessage::unread()->count(); @endphp
+        <div class="nav-group">
+            <button class="nav-group-toggle {{ $activeMessages ? '' : 'collapsed' }}"
+                    data-bs-toggle="collapse" data-bs-target="#grp-messages"
+                    aria-expanded="{{ $activeMessages ? 'true' : 'false' }}">
+                <span class="nav-group-icon"><i class="bi bi-chat-square-text"></i></span>
+                <span class="link-text nav-group-label d-flex align-items-center gap-2">
+                    {{ __('messages.nav_group_messages') }}
+                    @if($unreadCount > 0)
+                        <span class="badge bg-danger rounded-pill" style="font-size:.55rem">{{ $unreadCount }}</span>
+                    @endif
+                </span>
+                <i class="bi bi-chevron-down nav-group-chevron link-text"></i>
+            </button>
+            <div id="grp-messages" class="collapse nav-group-items {{ $activeMessages ? 'show' : '' }}">
+                @if($u->hasSection('subscribers'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.subscribers') ? 'active' : '' }}"
+                   href="{{ route('admin.subscribers.index') }}" data-label="{{ __('messages.nav_subscribers') }}">
+                    <i class="bi bi-envelope-check"></i>
+                    <span class="link-text">{{ __('messages.nav_subscribers') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('contact-messages'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.contact-messages') ? 'active' : '' }}"
+                   href="{{ route('admin.contact-messages.index') }}" data-label="{{ __('messages.nav_contact_messages') }}">
+                    <i class="bi bi-chat-square-text"></i>
+                    <span class="link-text d-flex align-items-center gap-2">
+                        {{ __('messages.nav_contact_messages') }}
+                        @if($unreadCount > 0)
+                            <span class="badge bg-danger rounded-pill" style="font-size:.55rem">{{ $unreadCount }}</span>
+                        @endif
+                    </span>
+                </a>
+                @endif
+            </div>
+        </div>
         @endif
 
-        @if($u->hasSection('services'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.services') ? 'active' : '' }}"
-           href="{{ route('admin.services.index') }}" data-label="{{ __('messages.manage_services') }}">
-            <i class="bi bi-grid"></i>
-            <span class="link-text">{{ __('messages.manage_services') }}</span>
-        </a>
+        {{-- GROUP: Sistem --}}
+        @if($u->hasSection('site-settings') || $u->hasSection('translations'))
+        <div class="nav-group">
+            <button class="nav-group-toggle {{ $activeSystem ? '' : 'collapsed' }}"
+                    data-bs-toggle="collapse" data-bs-target="#grp-system"
+                    aria-expanded="{{ $activeSystem ? 'true' : 'false' }}">
+                <span class="nav-group-icon"><i class="bi bi-gear"></i></span>
+                <span class="link-text nav-group-label">{{ __('messages.nav_group_system') }}</span>
+                <i class="bi bi-chevron-down nav-group-chevron link-text"></i>
+            </button>
+            <div id="grp-system" class="collapse nav-group-items {{ $activeSystem ? 'show' : '' }}">
+                @if($u->hasSection('site-settings'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.site-settings') ? 'active' : '' }}"
+                   href="{{ route('admin.site-settings.edit') }}" data-label="{{ __('messages.nav_settings') }}">
+                    <i class="bi bi-sliders"></i>
+                    <span class="link-text">{{ __('messages.nav_settings') }}</span>
+                </a>
+                @endif
+                @if($u->hasSection('translations'))
+                <a class="nav-link nav-sub {{ str_starts_with($cur ?? '', 'admin.translations') ? 'active' : '' }}"
+                   href="{{ route('admin.translations.index') }}" data-label="{{ __('messages.nav_translations') }}">
+                    <i class="bi bi-translate"></i>
+                    <span class="link-text">{{ __('messages.nav_translations') }}</span>
+                </a>
+                @endif
+            </div>
+        </div>
         @endif
 
-        @if($u->hasSection('hero-slides'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.hero-slides') ? 'active' : '' }}"
-           href="{{ route('admin.hero-slides.index') }}" data-label="{{ __('messages.manage_slides') }}">
-            <i class="bi bi-images"></i>
-            <span class="link-text">{{ __('messages.manage_slides') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('features'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.features') ? 'active' : '' }}"
-           href="{{ route('admin.features.index') }}" data-label="{{ __('messages.manage_features') }}">
-            <i class="bi bi-grid-3x3-gap"></i>
-            <span class="link-text">{{ __('messages.manage_features') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('partners'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.partners') ? 'active' : '' }}"
-           href="{{ route('admin.partners.index') }}" data-label="{{ __('messages.manage_partners') }}">
-            <i class="bi bi-building"></i>
-            <span class="link-text">{{ __('messages.manage_partners') }}</span>
-        </a>
-        @endif
-
-        <div class="sidebar-section-label">Sistem</div>
-
-        @if($u->hasSection('site-settings'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.site-settings') ? 'active' : '' }}"
-           href="{{ route('admin.site-settings.edit') }}" data-label="{{ __('messages.site_settings') }}">
-            <i class="bi bi-sliders"></i>
-            <span class="link-text">{{ __('messages.site_settings') }}</span>
-        </a>
-        @endif
-
-        @if($u->hasSection('translations'))
-        <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.translations') ? 'active' : '' }}"
-           href="{{ route('admin.translations.index') }}" data-label="{{ __('messages.manage_translations') }}">
-            <i class="bi bi-translate"></i>
-            <span class="link-text">{{ __('messages.manage_translations') }}</span>
-        </a>
-        @endif
-
+        {{-- Profile --}}
         <a class="nav-link {{ str_starts_with($cur ?? '', 'admin.profile') ? 'active' : '' }}"
            href="{{ route('admin.profile.edit') }}" data-label="{{ __('messages.profile') }}">
             <i class="bi bi-person-circle"></i>

@@ -17,11 +17,13 @@ class Service extends Model
         'body',
         'image_path',
         'is_published',
+        'show_on_home',
         'published_at',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'show_on_home' => 'boolean',
         'published_at' => 'datetime',
     ];
 

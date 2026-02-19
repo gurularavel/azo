@@ -32,5 +32,7 @@ class SiteSetting extends Model
         'footer_text',
         'terms_content',
         'privacy_content',
+        'services_hero_title',
+        'services_hero_subtitle',
     ];
 }

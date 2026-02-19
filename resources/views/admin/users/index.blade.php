@@ -16,8 +16,8 @@
 
 <div class="card shadow-sm">
     <div class="table-responsive">
-        <table class="table table-striped mb-0">
-            <thead>
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
                 <tr>
                     <th>{{ __('messages.name') }}</th>
                     <th>{{ __('messages.email') }}</th>
@@ -25,52 +25,46 @@
                     <th>{{ __('messages.plan') }}</th>
                     <th>{{ __('messages.usage_remaining') }}</th>
                     <th>{{ __('messages.blocked') }}</th>
-                    <th>{{ __('messages.actions') }}</th>
+                    <th style="width:200px">{{ __('messages.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
             @foreach($users as $user)
-                <tr>
-                    <td>{{ $user->name }}</td>
-                    <td class="text-muted small">{{ $user->email }}</td>
-                    <td>
-                        @php
-                            $roleColors = ['superadmin' => 'danger', 'admin' => 'warning', 'user' => 'secondary'];
-                            $color = $roleColors[$user->role] ?? 'secondary';
-                        @endphp
-                        <span class="badge bg-{{ $color }}-subtle text-{{ $color }} rounded-pill px-2">
-                            {{ __('messages.role_' . $user->role) }}
-                        </span>
-                    </td>
-                    <td>{{ $user->activeSubscription?->plan?->name ?? '-' }}</td>
-                    <td>{{ $user->activeSubscription?->usage_remaining ?? '-' }}</td>
-                    <td>
-                        <span class="badge {{ $user->is_blocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }} rounded-pill px-2">
-                            {{ $user->is_blocked ? __('messages.yes') : __('messages.no') }}
-                        </span>
-                    </td>
-                    <td>
-                        <form method="post" action="{{ route('admin.users.update', $user) }}" class="d-flex gap-2 flex-wrap">
-                            @csrf
-                            @method('put')
-                            <input class="form-control form-control-sm" style="width:90px" type="number" name="usage_remaining"
-                                   placeholder="{{ __('messages.usage_remaining') }}"
-                                   value="{{ $user->activeSubscription?->usage_remaining }}">
-                            <select class="form-select form-select-sm" style="width:110px" name="is_blocked">
-                                <option value="0" @selected(!$user->is_blocked)>{{ __('messages.active') }}</option>
-                                <option value="1" @selected($user->is_blocked)>{{ __('messages.blocked') }}</option>
-                            </select>
-                            @if(auth()->user()->role === 'superadmin')
-                            <select class="form-select form-select-sm" style="width:130px" name="role">
-                                <option value="user"       @selected($user->role === 'user')>{{ __('messages.role_user') }}</option>
-                                <option value="admin"      @selected($user->role === 'admin')>{{ __('messages.role_admin') }}</option>
-                                <option value="superadmin" @selected($user->role === 'superadmin')>{{ __('messages.role_superadmin') }}</option>
-                            </select>
-                            @endif
-                            <button class="btn btn-sm btn-outline-dark" type="submit">{{ __('messages.update') }}</button>
-                        </form>
-                    </td>
-                </tr>
+            @php
+                $roleColors = ['superadmin' => 'danger', 'admin' => 'warning', 'user' => 'secondary'];
+                $color = $roleColors[$user->role] ?? 'secondary';
+            @endphp
+            <tr>
+                <td class="fw-semibold">{{ $user->name }}</td>
+                <td class="text-muted small">{{ $user->email }}</td>
+                <td>
+                    <span class="badge bg-{{ $color }}-subtle text-{{ $color }} rounded-pill px-2">
+                        {{ __('messages.role_' . ($user->role ?? 'user')) }}
+                    </span>
+                </td>
+                <td>{{ $user->activeSubscription?->plan?->name ?? '-' }}</td>
+                <td>{{ $user->activeSubscription?->usage_remaining ?? '-' }}</td>
+                <td>
+                    <span class="badge {{ $user->is_blocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }} rounded-pill px-2">
+                        {{ $user->is_blocked ? __('messages.yes') : __('messages.no') }}
+                    </span>
+                </td>
+                <td>
+                    <form method="post" action="{{ route('admin.users.update', $user) }}" class="d-flex gap-2">
+                        @csrf
+                        @method('put')
+                        <input class="form-control form-control-sm" style="width:90px" type="number"
+                               name="usage_remaining"
+                               placeholder="{{ __('messages.usage_remaining') }}"
+                               value="{{ $user->activeSubscription?->usage_remaining }}">
+                        <select class="form-select form-select-sm" style="width:120px" name="is_blocked">
+                            <option value="0" @selected(!$user->is_blocked)>{{ __('messages.active') }}</option>
+                            <option value="1" @selected($user->is_blocked)>{{ __('messages.blocked') }}</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-dark" type="submit">{{ __('messages.update') }}</button>
+                    </form>
+                </td>
+            </tr>
             @endforeach
             </tbody>
         </table>

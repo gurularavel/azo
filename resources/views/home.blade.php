@@ -141,6 +141,58 @@
 </section>
 @endif
 
+{{-- Services --}}
+@if($homeServices->isNotEmpty())
+<section class="py-24 bg-slate-50/60">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="bg-orange-50 text-primary border border-orange-100 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-widest mb-4 inline-block">{{ __('messages.services') }}</span>
+            <h2 class="text-4xl font-extrabold text-secondary">Nə Təklif <span class="text-primary">Edirik?</span></h2>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach($homeServices as $service)
+            @php
+                $svcImg = $service->image_path
+                    ? (str_starts_with($service->image_path, 'http') ? $service->image_path : asset('storage/'.$service->image_path))
+                    : null;
+            @endphp
+            <div class="group bg-white rounded-2xl border border-slate-100 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col">
+                @if($svcImg)
+                <div class="h-48 overflow-hidden flex-shrink-0">
+                    <img src="{{ $svcImg }}" alt="{{ $service->title }}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                </div>
+                @endif
+                <div class="p-7 flex flex-col flex-1">
+                    <h3 class="text-xl font-bold text-secondary group-hover:text-primary transition-colors mb-3">
+                        {{ $service->title }}
+                    </h3>
+                    @if($service->excerpt)
+                    <p class="text-slate-500 leading-relaxed line-clamp-3 flex-1 text-sm">
+                        {{ strip_tags($service->excerpt) }}
+                    </p>
+                    @endif
+                    <a href="{{ route('services.show', $service) }}"
+                       class="inline-flex items-center gap-2 mt-5 text-primary font-bold text-sm hover:gap-3 transition-all">
+                        {{ __('messages.read_more') }}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        <div class="text-center mt-12">
+            <a href="{{ route('services.index') }}"
+               class="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-secondary text-secondary font-bold hover:bg-secondary hover:text-white transition-all">
+                {{ __('messages.services') }} — Hamısına bax
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- Why Us --}}
 @if($features->isNotEmpty())
 <section class="py-24">
@@ -405,10 +457,29 @@
                 <p class="text-xl opacity-90 leading-relaxed">Yeni gələn mağazalardan və xüsusi həftəlik endirimlərdən ilk siz xəbərdar olun.</p>
             </div>
             <div class="flex flex-col gap-4">
-                <a href="{{ route('register') }}"
-                    class="w-full py-5 rounded-xl bg-secondary text-white font-bold text-lg text-center hover:bg-secondary-dark hover:scale-[1.01] transition-all duration-300">
-                    Abunə Ol və Qazan
-                </a>
+                @if(session('subscriber_success'))
+                    <div class="bg-white/20 border border-white/40 text-white rounded-xl px-6 py-4 text-center font-semibold">
+                        ✅ Uğurla abunə oldunuz!
+                    </div>
+                @else
+                <form action="{{ route('subscribers.store') }}" method="post" class="flex flex-col gap-3">
+                    @csrf
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="email@example.com"
+                        class="w-full px-6 py-4 rounded-xl text-gray-900 text-lg bg-white placeholder-gray-400 outline-none focus:ring-4 focus:ring-white/40 shadow-lg"
+                    >
+                    @error('email')
+                        <p class="text-white/80 text-sm">{{ $message }}</p>
+                    @enderror
+                    <button type="submit"
+                        class="w-full py-4 rounded-xl bg-secondary text-white font-bold text-lg text-center hover:bg-secondary-dark hover:scale-[1.01] transition-all duration-300 shadow-lg">
+                        Abunə Ol və Qazan
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
     </div>

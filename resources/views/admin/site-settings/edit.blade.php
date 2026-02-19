@@ -146,6 +146,25 @@
                 <textarea name="footer_text" class="form-control" rows="3">{{ old('footer_text', $settings->footer_text) }}</textarea>
             </div>
 
+            {{-- Services Page Hero --}}
+            <div class="col-12 mt-2">
+                <h5 class="mb-1">Xidmətlər Səhifəsi Başlığı</h5>
+                <p class="text-muted small mb-2">Xidmətlər siyahısı səhifəsinin hero bölməsindəki başlıq və alt mətn.</p>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label">{{ __('messages.services_hero_title') }}</label>
+                <input type="text" name="services_hero_title" class="form-control"
+                       value="{{ old('services_hero_title', $settings->services_hero_title) }}"
+                       placeholder="Azərbaycanın Ən Böyük Endirim Platforması">
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label">{{ __('messages.services_hero_subtitle') }}</label>
+                <textarea name="services_hero_subtitle" class="form-control" rows="3"
+                          placeholder="Biz müştərilərimizə mağazalardan ən yaxşı endirimlər əldə etməyə kömək edirik.">{{ old('services_hero_subtitle', $settings->services_hero_subtitle) }}</textarea>
+            </div>
+
             {{-- Legal Content --}}
             <div class="col-12 mt-2">
                 <h5 class="mb-1">{{ __('messages.terms_title') }}</h5>

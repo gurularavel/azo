@@ -66,13 +66,14 @@ class ServiceController extends Controller
         $serviceId = $service?->id;
 
         return $request->validate([
-            'title' => ['required', 'string', 'max:150'],
-            'slug' => ['nullable', 'string', 'max:180', 'unique:services,slug'.($serviceId ? ','.$serviceId : '')],
-            'excerpt' => ['nullable', 'string'],
-            'body' => ['required', 'string'],
-            'image_path' => ['nullable', 'string', 'max:255'],
-            'image_file' => ['nullable', 'image', 'max:4096'],
+            'title'        => ['required', 'string', 'max:150'],
+            'slug'         => ['nullable', 'string', 'max:180', 'unique:services,slug'.($serviceId ? ','.$serviceId : '')],
+            'excerpt'      => ['nullable', 'string'],
+            'body'         => ['nullable', 'string'],
+            'image_path'   => ['nullable', 'string', 'max:255'],
+            'image_file'   => ['nullable', 'image', 'max:4096'],
             'is_published' => ['nullable', 'boolean'],
+            'show_on_home' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -91,7 +92,9 @@ class ServiceController extends Controller
         }
 
         $data['slug'] = $this->uniqueSlug($slug, $service?->id);
+        $data['body']         = $data['body'] ?? '';
         $data['is_published'] = (bool) ($data['is_published'] ?? false);
+        $data['show_on_home'] = (bool) ($data['show_on_home'] ?? false);
         $data['published_at'] = $data['is_published'] ? ($service?->published_at ?? now()) : null;
 
         return $data;

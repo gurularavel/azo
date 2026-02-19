@@ -22,27 +22,12 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $isSuperAdmin = auth()->user()->role === 'superadmin';
-
-        $rules = [
+        $data = $request->validate([
             'is_blocked'      => ['required', 'boolean'],
             'usage_remaining' => ['nullable', 'integer', 'min:0'],
-        ];
+        ]);
 
-        if ($isSuperAdmin) {
-            $rules['role'] = ['required', 'in:user,admin,superadmin'];
-        }
-
-        $data = $request->validate($rules);
-
-        $userFields = ['is_blocked' => $data['is_blocked']];
-
-        if ($isSuperAdmin && isset($data['role'])) {
-            $userFields['role']     = $data['role'];
-            $userFields['is_admin'] = in_array($data['role'], ['admin', 'superadmin']);
-        }
-
-        $user->update($userFields);
+        $user->update(['is_blocked' => $data['is_blocked']]);
 
         if (($data['usage_remaining'] ?? null) !== null) {
             $subscription = $user->activeSubscription()->first();
@@ -51,6 +36,7 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->route('admin.users.index')->with('status', __('messages.user_updated'));
+        return redirect()->route('admin.users.index')
+            ->with('status', __('messages.user_updated'));
     }
 }

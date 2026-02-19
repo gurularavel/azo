@@ -17,11 +17,14 @@ use App\Http\Controllers\Admin\TransactionController as AdminTransactionControll
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\TranslationController as AdminTranslationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
+use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SubscriptionController;
 use App\Models\Blog;
 use App\Models\Feature;
@@ -61,8 +64,9 @@ Route::get('/', function () {
     if (Schema::hasTable('services')) {
         $services = Service::query()
             ->published()
+            ->where('show_on_home', true)
             ->latest('published_at')
-            ->take(3)
+            ->take(6)
             ->get();
     }
 
@@ -119,6 +123,8 @@ Route::get('/qr/{token}', [ShopController::class, 'scan'])->name('qr.scan');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+Route::post('/subscribe', [SubscriberController::class, 'store'])->name('subscribers.store');
+
 Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
 Route::get('/blogs/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
@@ -165,4 +171,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::get('translations', [AdminTranslationController::class, 'index'])->name('translations.index');
     Route::put('translations', [AdminTranslationController::class, 'update'])->name('translations.update');
+
+    Route::get('subscribers', [AdminSubscriberController::class, 'index'])->name('subscribers.index');
+    Route::delete('subscribers/{subscriber}', [AdminSubscriberController::class, 'destroy'])->name('subscribers.destroy');
+
+    Route::get('contact-messages', [AdminContactMessageController::class, 'index'])->name('contact-messages.index');
+    Route::delete('contact-messages/{contactMessage}', [AdminContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
 });
