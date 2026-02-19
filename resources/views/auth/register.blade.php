@@ -46,14 +46,17 @@
         <div class="space-y-2">
             <label class="text-sm font-bold text-slate-500 ml-4">Telefon Nömrəsi</label>
             <div class="relative">
-                <span class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400">
+                <span class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 z-10">
                     <svg fill="none" class="w-5 h-5" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                 </span>
-                <input type="text" name="phone" value="{{ old('phone', request('phone')) }}" placeholder="+994 50 000 00 00"
-                    class="w-full pl-14 pr-6 py-4 rounded-sm bg-slate-50 border border-slate-100 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-medium" />
+                <span class="absolute top-1/2 -translate-y-1/2 font-bold text-secondary text-sm pointer-events-none select-none z-10" style="left:3.25rem">+994</span>
+                <input type="tel" id="phone-display" maxlength="12" placeholder="50 123 45 67" autocomplete="tel"
+                    class="w-full pr-6 py-4 rounded-sm bg-slate-50 border border-slate-100 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-medium"
+                    style="padding-left:7.75rem" />
+                <input type="hidden" name="phone" id="phone-hidden" value="{{ old('phone', request('phone')) }}" />
             </div>
         </div>
 
@@ -181,6 +184,56 @@
 
 @push('scripts')
 <script>
+    // ── Phone +994 mask ──
+    (function () {
+        const display = document.getElementById('phone-display');
+        const hidden  = document.getElementById('phone-hidden');
+        if (!display || !hidden) return;
+
+        function digitsOnly(str) {
+            return str.replace(/\D/g, '').slice(0, 9);
+        }
+
+        function fmt(digits) {
+            let r = digits.slice(0, 2);
+            if (digits.length > 2) r += ' ' + digits.slice(2, 5);
+            if (digits.length > 5) r += ' ' + digits.slice(5, 7);
+            if (digits.length > 7) r += ' ' + digits.slice(7, 9);
+            return r;
+        }
+
+        // Restore from old() value on page load
+        const init = hidden.value;
+        if (init && init.startsWith('+994')) {
+            display.value = fmt(digitsOnly(init.slice(4)));
+        }
+
+        display.addEventListener('input', function () {
+            const digits = digitsOnly(this.value);
+            this.value = fmt(digits);
+            hidden.value = digits.length ? '+994' + digits : '';
+        });
+
+        display.addEventListener('keydown', function (e) {
+            // Allow: backspace, delete, tab, escape, arrows, home, end
+            const allow = ['Backspace','Delete','Tab','Escape','ArrowLeft','ArrowRight','Home','End'];
+            if (allow.includes(e.key)) return;
+            // Block non-digits
+            if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+        });
+
+        // Paste: strip non-digits
+        display.addEventListener('paste', function (e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData('text');
+            // If pasted value starts with +994, strip it
+            const raw = pasted.startsWith('+994') ? pasted.slice(4) : pasted;
+            const digits = digitsOnly(raw);
+            this.value = fmt(digits);
+            hidden.value = digits.length ? '+994' + digits : '';
+        });
+    })();
+
     const termsContent  = @json($siteSettings?->terms_content ?? '');
     const privacyContent = @json($siteSettings?->privacy_content ?? '');
 

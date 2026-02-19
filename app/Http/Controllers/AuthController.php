@@ -18,9 +18,9 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['required', 'string', 'max:30'],
+            'name'     => ['required', 'string', 'max:120'],
+            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone'    => ['required', 'string', 'regex:/^\+994[0-9]{9}$/'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
@@ -33,8 +33,8 @@ class AuthController extends Controller
         ]);
 
         $otp = OtpCode::create([
-            'user_id' => $user->id,
-            'code' => (string) random_int(100000, 999999),
+            'user_id'    => $user->id,
+            'code'       => (string) random_int(1000, 9999),
             'expires_at' => now()->addMinutes(5),
         ]);
 
