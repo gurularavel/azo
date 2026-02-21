@@ -96,29 +96,72 @@
         </div>
     </div>
 
-    <div id="mobile-menu" class="hidden md:hidden border-t border-orange-100 bg-white">
-        <nav class="container mx-auto px-4 py-4 flex flex-col gap-3">
-            <a href="{{ route('home') }}" class="text-slate-700">{{ __('messages.home') }}</a>
-            <a href="{{ route('shops.index') }}" class="text-slate-700">{{ __('messages.shops') }}</a>
-            <a href="{{ route('blogs.index') }}" class="text-slate-700">{{ __('messages.blogs') }}</a>
-            <a href="{{ route('services.index') }}" class="text-slate-700">{{ __('messages.services') }}</a>
-            <a href="{{ route('contact') }}" class="text-slate-700">{{ __('messages.contact') }}</a>
-            @auth
-                <a href="{{ route('subscriptions.index') }}" class="text-slate-700">{{ __('messages.subscriptions') }}</a>
-                @if(auth()->user()->is_admin)
-                    <a href="{{ route('admin.dashboard') }}" class="text-slate-700">{{ __('messages.admin_panel') }}</a>
-                @endif
-            @endauth
-            <div class="flex gap-2 pt-2">
-                <a href="{{ request()->fullUrlWithQuery(['lang' => 'az']) }}" class="text-sm px-3 py-1 rounded-full border border-slate-300">AZ</a>
-                <a href="{{ request()->fullUrlWithQuery(['lang' => 'en']) }}" class="text-sm px-3 py-1 rounded-full border border-slate-300">EN</a>
-                <a href="{{ request()->fullUrlWithQuery(['lang' => 'ru']) }}" class="text-sm px-3 py-1 rounded-full border border-slate-300">RU</a>
-            </div>
-        </nav>
-    </div>
 </header>
 
-<main class="min-h-screen">
+{{-- Mobile Menu Overlay --}}
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-white z-[60] p-6 flex flex-col overflow-y-auto hidden animate__animated" style="animation-duration:0.35s">
+    <div class="flex justify-between items-center mb-8">
+        <a href="{{ route('home') }}" class="flex items-center">
+            <img src="{{ asset('template/images/logo.svg') }}" alt="{{ $siteSettings?->site_name ?? 'Logo' }}" class="w-14" />
+        </a>
+        <button id="mobile-menu-close" class="text-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+    <nav class="flex-1 flex flex-col gap-4 text-xl font-bold text-secondary">
+        <a href="{{ route('home') }}" class="{{ request()->is('/') ? 'text-primary' : '' }}">{{ __('messages.home') }}</a>
+        <a href="{{ route('shops.index') }}" class="{{ request()->is('shops*') ? 'text-primary' : '' }}">{{ __('messages.shops') }}</a>
+        <a href="{{ route('blogs.index') }}" class="{{ request()->is('blogs*') ? 'text-primary' : '' }}">{{ __('messages.blogs') }}</a>
+        <a href="{{ route('services.index') }}" class="{{ request()->is('services*') ? 'text-primary' : '' }}">{{ __('messages.services') }}</a>
+        <a href="{{ route('contact') }}" class="{{ request()->is('contact') ? 'text-primary' : '' }}">{{ __('messages.contact') }}</a>
+        @auth
+            <a href="{{ route('subscriptions.index') }}" class="{{ request()->is('subscriptions*') ? 'text-primary' : '' }}">{{ __('messages.subscriptions') }}</a>
+            @if(auth()->user()->is_admin)
+                <a href="{{ route('admin.dashboard') }}" class="">{{ __('messages.admin_panel') }}</a>
+            @endif
+        @endauth
+
+        <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-3">
+            @auth
+                @if(auth()->user()->is_admin)
+                    <a href="{{ route('admin.dashboard') }}" class="w-full py-3 text-center rounded-xl border-2 border-secondary text-secondary text-base font-semibold">{{ __('messages.admin_panel') }}</a>
+                @endif
+                <form method="post" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full py-3 text-center rounded-xl border-2 border-primary text-primary text-base font-semibold">{{ __('messages.logout') }}</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="w-full py-3 text-center rounded-xl border-2 border-primary text-primary text-base font-semibold">{{ __('messages.login') }}</a>
+                <a href="{{ route('register') }}" class="w-full py-3 text-center rounded-xl bg-primary text-white text-base font-semibold">{{ __('messages.register') }}</a>
+            @endauth
+        </div>
+
+        <div class="mt-auto pt-8 pb-4">
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">{{ __('messages.language') ?? 'Dil seçimi' }}</p>
+            <div class="flex gap-4">
+                <a href="{{ request()->fullUrlWithQuery(['lang' => 'az']) }}"
+                   class="flex flex-col items-center gap-2 flex-1 p-3 rounded-xl border-2 transition-all {{ $lang === 'az' ? 'border-primary bg-slate-50' : 'border-transparent bg-slate-50/50 hover:border-slate-200' }}">
+                    <img src="https://flagcdn.com/w40/az.png" class="w-7 h-auto rounded-sm shadow-sm" alt="AZ">
+                    <span class="text-xs font-bold {{ $lang === 'az' ? 'text-secondary' : 'text-slate-400' }}">AZ</span>
+                </a>
+                <a href="{{ request()->fullUrlWithQuery(['lang' => 'en']) }}"
+                   class="flex flex-col items-center gap-2 flex-1 p-3 rounded-xl border-2 transition-all {{ $lang === 'en' ? 'border-primary bg-slate-50' : 'border-transparent bg-slate-50/50 hover:border-slate-200' }}">
+                    <img src="https://flagcdn.com/w40/gb.png" class="w-7 h-auto rounded-sm shadow-sm" alt="EN">
+                    <span class="text-xs font-bold {{ $lang === 'en' ? 'text-secondary' : 'text-slate-400' }}">EN</span>
+                </a>
+                <a href="{{ request()->fullUrlWithQuery(['lang' => 'ru']) }}"
+                   class="flex flex-col items-center gap-2 flex-1 p-3 rounded-xl border-2 transition-all {{ $lang === 'ru' ? 'border-primary bg-slate-50' : 'border-transparent bg-slate-50/50 hover:border-slate-200' }}">
+                    <img src="https://flagcdn.com/w40/ru.png" class="w-7 h-auto rounded-sm shadow-sm" alt="RU">
+                    <span class="text-xs font-bold {{ $lang === 'ru' ? 'text-secondary' : 'text-slate-400' }}">RU</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<main class="pt-24 min-h-screen">
     @if(session('status'))
         <div class="container mx-auto px-4 mt-4">
             <div class="mb-4 p-4 rounded-sm bg-green-50 text-green-800 border border-green-200">{{ session('status') }}</div>
@@ -254,12 +297,24 @@
 
 <script>
     const mobileToggle = document.getElementById('mobile-menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileToggle && mobileMenu) {
-        mobileToggle.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+    const mobileOverlay = document.getElementById('mobile-menu-overlay');
+    const mobileClose = document.getElementById('mobile-menu-close');
+
+    function openMobileMenu() {
+        mobileOverlay.classList.remove('hidden', 'animate__fadeOutDown');
+        mobileOverlay.classList.add('animate__fadeInUp');
+        document.body.style.overflow = 'hidden';
     }
+
+    function closeMobileMenu() {
+        mobileOverlay.classList.remove('animate__fadeInUp');
+        mobileOverlay.classList.add('animate__fadeOutDown');
+        document.body.style.overflow = '';
+        setTimeout(() => mobileOverlay.classList.add('hidden'), 350);
+    }
+
+    if (mobileToggle) mobileToggle.addEventListener('click', openMobileMenu);
+    if (mobileClose) mobileClose.addEventListener('click', closeMobileMenu);
 </script>
 @stack('scripts')
 </body>

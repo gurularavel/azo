@@ -7,7 +7,6 @@
 <style>
     .stores-swiper .swiper-slide { height: auto; display: flex; }
     .stores-swiper .swiper-slide > div { width: 100%; }
-    .hero-gradient { background: linear-gradient(135deg, #fff4e5 0%, #fff 50%, #f0f4ff 100%); }
 </style>
 @endpush
 
@@ -40,20 +39,19 @@
     $statSavLabel     = $siteSettings?->hero_stat_savings_label   ?? 'Orta Qənaət';
 @endphp
 
-<section class="hero-gradient">
-    <div class="container mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center gap-12">
-        <div class="flex-1 animate__animated animate__fadeInLeft">
+<section class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center py-20">
+    <div class="animate__animated animate__fadeInLeft">
             <span class="inline-block bg-orange-50 text-primary border border-orange-100 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-widest mb-6">
                 {{ $siteSettings?->site_name ?? 'QR Endirim' }}
             </span>
 
             @if($heroTitle)
-                <h1 class="text-4xl md:text-6xl font-black text-secondary leading-tight mb-6">
+                <h1 class="text-4xl md:text-7xl font-extrabold text-secondary leading-[1.1] mb-6">
                     {!! nl2br(e($heroTitle)) !!}
                 </h1>
             @else
-                <h1 class="text-4xl md:text-6xl font-black text-secondary leading-tight mb-6">
-                    Endirimli <span class="text-primary italic">Alış-verişin</span><br />Yeni Yolu
+                <h1 class="text-4xl md:text-7xl font-extrabold text-secondary leading-[1.1] mb-6">
+                    Alış-verişdə <br /><span class="text-primary">Yeni Dövr</span> Başladı
                 </h1>
             @endif
 
@@ -65,21 +63,21 @@
                 </p>
             @endif
 
-            <div class="flex flex-wrap gap-4 mb-12">
+            <div class="flex flex-col sm:flex-row gap-4">
                 <a href="{{ $heroBtnPrimaryUrl }}"
-                    class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-bold text-lg shadow-orange hover:bg-primary-hover transition-all duration-300">
+                    class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-white text-lg font-bold shadow-orange hover:bg-primary-hover transition-all duration-300">
                     {{ $heroBtnPrimaryText }}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                     </svg>
                 </a>
                 <a href="{{ $heroBtnSecUrl }}"
-                    class="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-secondary text-secondary font-bold text-lg hover:bg-secondary hover:text-white transition-all duration-300">
+                    class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-slate-200 text-secondary text-lg font-bold hover:bg-slate-50 transition-all duration-300">
                     {{ $heroBtnSecText }}
                 </a>
             </div>
 
-            <div class="flex gap-8 pt-8 border-t border-slate-100">
+            <div class="flex gap-8 mt-16 pt-8 border-t border-slate-100">
                 <div>
                     <p class="text-3xl font-bold text-secondary">{{ $statUsersVal }}</p>
                     <p class="text-slate-500">{{ $statUsersLabel }}</p>
@@ -95,14 +93,13 @@
             </div>
         </div>
 
-        <div class="flex-1 relative animate__animated animate__fadeInRight">
-            <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl bg-secondary/5 border border-white/20 backdrop-blur-sm p-4">
-                <img src="{{ $heroImage ?? asset('template/images/homepage/hero-modern.png') }}" alt="Hero"
-                    class="hidden md:block w-full h-auto rounded-xl shadow-premium" />
-            </div>
-            <div class="hidden md:block absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-            <div class="hidden md:block absolute -bottom-10 -left-10 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="relative animate__animated animate__fadeInRight">
+        <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl bg-secondary/5 border border-white/20 backdrop-blur-sm p-4">
+            <img src="{{ $heroImage ?? asset('template/images/homepage/hero-modern.png') }}" alt="Hero"
+                class="hidden md:block w-full h-auto rounded-xl shadow-premium" />
         </div>
+        <div class="hidden md:block absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+        <div class="hidden md:block absolute -bottom-10 -left-10 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
     </div>
 </section>
 

@@ -84,17 +84,19 @@ class ShopController extends Controller
             ->first();
 
         if (!$qrSession) {
-            return redirect()->route('home')->with('error', __('messages.qr_invalid'));
+            return view('qr.scan-result', [
+                'success' => false,
+                'shop'    => null,
+                'message' => __('messages.qr_invalid'),
+                'remaining' => null,
+            ]);
         }
 
         $result = DB::transaction(function () use ($qrSession) {
             $subscription = $qrSession->user->activeSubscription()->lockForUpdate()->first();
 
             if (!$subscription || $subscription->usage_remaining < 1) {
-                return [
-                    'ok' => false,
-                    'remaining' => 0,
-                ];
+                return ['ok' => false, 'remaining' => 0];
             }
 
             $subscription->decrement('usage_remaining');
@@ -102,28 +104,31 @@ class ShopController extends Controller
             $qrSession->update(['used_at' => now()]);
 
             QrTransaction::create([
-                'user_id' => $qrSession->user_id,
-                'shop_id' => $qrSession->shop_id,
-                'qr_session_id' => $qrSession->id,
+                'user_id'          => $qrSession->user_id,
+                'shop_id'          => $qrSession->shop_id,
+                'qr_session_id'    => $qrSession->id,
                 'discount_percent' => $qrSession->shop->discount_percent,
-                'scanned_at' => now(),
+                'scanned_at'       => now(),
             ]);
 
-            return [
-                'ok' => true,
-                'remaining' => $subscription->usage_remaining,
-            ];
+            return ['ok' => true, 'remaining' => $subscription->usage_remaining];
         });
 
         if (!$result['ok']) {
-            return redirect()
-                ->route('shops.show', $qrSession->shop)
-                ->with('error', __('messages.qr_limit_reached'));
+            return view('qr.scan-result', [
+                'success'   => false,
+                'shop'      => $qrSession->shop,
+                'message'   => __('messages.qr_limit_reached'),
+                'remaining' => null,
+            ]);
         }
 
-        return redirect()
-            ->route('shops.show', $qrSession->shop)
-            ->with('status', __('messages.qr_scan_success', ['count' => $result['remaining']]));
+        return view('qr.scan-result', [
+            'success'   => true,
+            'shop'      => $qrSession->shop,
+            'message'   => __('messages.qr_scan_success', ['count' => $result['remaining']]),
+            'remaining' => $result['remaining'],
+        ]);
     }
 
     public function verify(Request $request, Shop $shop)
